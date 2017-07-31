@@ -1,22 +1,17 @@
 package com.stackroute.datamunger.result;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.stackroute.datamunger.analyzer.QueryAnalyzer;
 import com.stackroute.datamunger.query.QueryParser;
 import com.stackroute.datamunger.reader.CSVFileReader;
 import com.stackroute.datamunger.restrictions.AggregateFunctions;
-import com.stackroute.datamunger.restrictions.Restriction;
 
 public class GroupByResultSet implements QueryAnalyzer {
 
@@ -33,22 +28,14 @@ public class GroupByResultSet implements QueryAnalyzer {
 	public ResultSet analyzeQuery(QueryParser queryParser) {
 		csvFileReader = new CSVFileReader(queryParser.getFilePath());
 
-		/*
-		 * if(queryParser.getGroupBy() !=null) {
-		 * groupByList=Arrays.asList(queryParser.getGroupBy());
-		 * groupBycolumnData=csvFileReader.getData(groupByList); uniqueSet=new
-		 * LinkedHashSet<>(); groupByData= new ArrayList<>(); for(List<String>
-		 * unique : groupBycolumnData) { uniqueSet.addAll(unique);
-		 * groupByData.addAll(unique); } } int groupCount=0;
-		 * 
-		 * for(String uniqueValue : uniqueSet) { map = new HashMap<>();
-		 * for(String value : groupByData ) {
-		 * 
-		 * if(uniqueValue.equals(value)) { groupCount++; } }
-		 * map.put(uniqueValue, groupCount); groupCount=0;
-		 * System.out.println(map); }
-		 */
-		int iteration = 0;
+		
+		  if(queryParser.getGroupBy() !=null) {
+		  groupByList=Arrays.asList(queryParser.getGroupBy());
+		  groupBycolumnData=csvFileReader.getData(groupByList); uniqueSet=new
+		  LinkedHashSet<>(); groupByData= new ArrayList<>(); for(List<String>
+		  unique : groupBycolumnData) { uniqueSet.addAll(unique);
+		  groupByData.addAll(unique); } } 
+		  int iteration = 0;
 
 		resultSet = new ResultSet();
 		List<AggregateFunctions> aggregateFunctions = queryParser.getAggregateFunction();
@@ -66,27 +53,23 @@ public class GroupByResultSet implements QueryAnalyzer {
 				break;
 			case "sum":
 				result = new ArrayList<>();
-				int sum = aggregatePropertySum(propertyList);
-				result.add(String.valueOf(sum));
+				result = aggregatePropertySum(propertyList,queryParser);
 				break;
 			case "avg":
 				result = new ArrayList<>();
-				int findSum = aggregatePropertySum(propertyList);
+				List<String> findSum = aggregatePropertySum(propertyList,queryParser);
 				List<String> avgCount = aggregatePropertyCount(propertyList,queryParser);
-				result.add(String.valueOf(findSum / avgCount.size()));
+				result.add(String.valueOf(findSum.size() / avgCount.size()));
 
 				break;
 			case "min":
 				result = new ArrayList<>();
-				int min = aggregatePropertyMin(propertyList);
-				result.add(String.valueOf(min));
+				result = aggregatePropertyMin(propertyList,queryParser);
 
 				break;
 			case "max":
 				result = new ArrayList<>();
-				int max = aggregatePropertyMax(propertyList);
-				result.add(String.valueOf(max));
-
+				 result = aggregatePropertyMax(propertyList,queryParser);
 				break;
 
 			}
@@ -97,38 +80,109 @@ public class GroupByResultSet implements QueryAnalyzer {
 		return resultSet;
 	}
 
-	private int aggregatePropertyMax(List<String> propertyList) {
+	private List<String> aggregatePropertyMax(List<String> propertyList,QueryParser queryParser) {
+		List<String> maxList=null;
 		List<List<String>> dataSet = csvFileReader.getData(propertyList);
-		int max = Integer.parseInt(dataSet.get(0).get(0));
-		for (List<String> columnCount : dataSet) {
-			if (Integer.parseInt(columnCount.get(0)) > max)
-				max = Integer.parseInt(columnCount.get(0));
-		}
-		return max;
-	}
-
-	private int aggregatePropertyMin(List<String> propertyList) {
-		List<List<String>> dataSet = csvFileReader.getData(propertyList);
+		if(queryParser.getGroupBy()==null)
+		{
+			maxList= new ArrayList<>();
 		int min = Integer.parseInt(dataSet.get(0).get(0));
 		for (List<String> columnCount : dataSet) {
 			if (Integer.parseInt(columnCount.get(0)) < min)
 				min = Integer.parseInt(columnCount.get(0));
 		}
-		return min;
+		maxList.add(String.valueOf(min));
+		}else {
+			
+			int i=0;
+			maxList = new ArrayList<>();
+			for (String uniqueValue : uniqueSet) {
+				int maxCount = Integer.parseInt(dataSet.get(i).get(0));
+				for (String value : groupByData) {
+					if (uniqueValue.equals(value)) {
+						if(maxCount<Integer.parseInt(dataSet.get(i).get(0)))
+							maxCount=Integer.parseInt(dataSet.get(i).get(0));
+						
+					}
+				
+				}
+				i++;
+				String column = uniqueValue +" = "+ maxCount;
+				maxCount=0;
+				maxList.add(column);
+			}
+		}
+		return maxList;
 	}
 
-	private int aggregatePropertySum(List<String> propertyList) {
+	private List<String> aggregatePropertyMin(List<String> propertyList,QueryParser queryParser) {
+		List<String> minList=null;
 		List<List<String>> dataSet = csvFileReader.getData(propertyList);
+		if(queryParser.getGroupBy()==null)
+		{
+			minList= new ArrayList<>();
+		int min = Integer.parseInt(dataSet.get(0).get(0));
+		for (List<String> columnCount : dataSet) {
+			if (Integer.parseInt(columnCount.get(0)) < min)
+				min = Integer.parseInt(columnCount.get(0));
+		}
+		minList.add(String.valueOf(min));
+		}else {
+			
+			int i=0;
+			minList = new ArrayList<>();
+			for (String uniqueValue : uniqueSet) {
+				int minCount = Integer.parseInt(dataSet.get(i).get(0));
+				for (String value : groupByData) {
+					if (uniqueValue.equals(value)) {
+						if(minCount>Integer.parseInt(dataSet.get(i).get(0)))
+							minCount=Integer.parseInt(dataSet.get(i).get(0));
+						
+					}
+				
+				}
+				i++;
+				String column = uniqueValue +" = "+ minCount;
+				minCount=0;
+				minList.add(column);
+			}
+		}
+		return minList;
+	}
+
+	private List<String> aggregatePropertySum(List<String> propertyList,QueryParser queryParser) {
+		List<String> sumList=null;
 		
+		List<List<String>> dataSet = csvFileReader.getData(propertyList);
+		if(queryParser.getGroupBy()==null)
+		{
 		int sum = 0;
-       
+        sumList= new ArrayList<>();
 		for (List<String> columnCount : dataSet) {
 			if (columnCount.get(0) != null) {
 				sum = sum + Integer.parseInt(columnCount.get(0).trim());
 			}
 		}
+		sumList.add(String.valueOf(sum));
 		
-		return sum;
+		}else {
+			int groupCount = 0;
+			int i=0;
+			sumList = new ArrayList<>();
+			for (String uniqueValue : uniqueSet) {
+				
+				for (String value : groupByData) {
+					if (uniqueValue.equals(value)) {
+						groupCount=groupCount+Integer.parseInt(dataSet.get(i++).get(0));
+					}
+				}
+				String column = uniqueValue +" = "+ groupCount;
+				groupCount=0;
+				sumList.add(column);
+			}
+		}
+		
+		return sumList;
 		}
 	
 
@@ -136,6 +190,7 @@ public class GroupByResultSet implements QueryAnalyzer {
 		List<String> countList = null;
 		if (queryParser.getGroupBy() == null) {
 			List<List<String>> dataSet = csvFileReader.getData(propertyList);
+			System.out.println(dataSet.get(0).get(0));
 			countList = new ArrayList<>();
 			int count = 0;
 			for (List<String> columnCount : dataSet) {
@@ -145,21 +200,11 @@ public class GroupByResultSet implements QueryAnalyzer {
 			countList.add(String.valueOf(count));
 			return countList;
 		} else {
-			groupByList = Arrays.asList(queryParser.getGroupBy());
-			groupBycolumnData = csvFileReader.getData(groupByList);
-			uniqueSet = new LinkedHashSet<>();
-			groupByData = new ArrayList<>();
-			for (List<String> unique : groupBycolumnData) {
-				uniqueSet.addAll(unique);
-				groupByData.addAll(unique);
-			}
-
 			int groupCount = 0;
 			countList = new ArrayList<>();
 			for (String uniqueValue : uniqueSet) {
 				
 				for (String value : groupByData) {
-
 					if (uniqueValue.equals(value)) {
 						groupCount++;
 					}
@@ -167,9 +212,7 @@ public class GroupByResultSet implements QueryAnalyzer {
 				String column = uniqueValue +" = "+ groupCount;
 				groupCount=0;
 				countList.add(column);
-
 			}
-
 		}
 		return countList;
 	}

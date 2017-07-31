@@ -27,7 +27,7 @@ public class DataMungerTest {
 		resultSet= new ResultSet();
 		
 	}
-	 
+	@Ignore
 	@Test
      public void selectAllWithoutWhereTestCase(){
 		String queryString="select * from C:/Scala/emp.csv";
@@ -36,7 +36,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void selectColumnsWithoutWhereTestCase(){
 		String queryString="select City,Salary,Name from C:/Scala/emp.csv";
@@ -45,7 +45,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void withWhereGreaterThanTestCase(){
 		String queryString="select City,Dept,Name from C:/Scala/emp.csv where Salary >30000";
@@ -54,7 +54,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-     
+    @Ignore
 	@Test
 	public void withWhereLessThanTestCase(){
 		
@@ -64,7 +64,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void withWhereLessThanOrEqualToTestCase(){
 		
@@ -74,7 +74,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-    
+   @Ignore
 	@Test
 	public void withWhereGreaterThanOrEqualToTestCase(){
 		
@@ -84,7 +84,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-    
+   @Ignore
 	@Test
 	public void withWhereNotEqualToTestCase(){
 		
@@ -94,7 +94,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void withWhereEqualAndNotEqualTestCase(){
 		
@@ -105,7 +105,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void testAllColumnsWithoutWhereWithOrderByTestCase(){
 		
@@ -115,7 +115,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
     @Test
 	public void selectOrderByColumnsWithWhereTestCase(){
 		
@@ -125,7 +125,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-     
+    @Ignore
 	@Test
 	public void selectOrderByWithoutWhereColumnsWithWhereTestCase(){
 		
@@ -135,7 +135,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-     
+    @Ignore
 	@Test
 	public void selectSumColumnsWithTestCase(){
 		
@@ -145,7 +145,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-     
+    @Ignore
 	@Test
 	public void selectCountAllColumnsTestCase(){
 		
@@ -154,7 +154,7 @@ public class DataMungerTest {
 		assertNotNull(resultSet);
 		display(queryString,resultSet);
 	}
-     
+    @Ignore
 	@Test
 	public void selectAverageSalaryColumnsTestCase(){
 		
@@ -165,7 +165,7 @@ public class DataMungerTest {
 		
 	}
 	@Test
-	 
+	@Ignore
 	public void selectMinSalaryColumnsWithWhereTestCase(){
 		
 		String queryString="select min(Salary) from C:/Scala/emp.csv";
@@ -174,7 +174,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void selectMaxSalaryColumnsWithWhereTestCase(){
 		String queryString="select max(Salary) from C:/Scala/emp.csv";
@@ -183,7 +183,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void selectLogicalOperatorAndColumnsWithWhereTestCase(){
 		
@@ -193,7 +193,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-	 
+	@Ignore
 	@Test
 	public void selectMultipleAggregateTestCase(){
 		
@@ -203,7 +203,7 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
-    
+   @Ignore
    @Test
 	public void selectGroupByColumnsWithWhereTestCase(){
 		
@@ -213,10 +213,50 @@ public class DataMungerTest {
 		display(queryString,resultSet);
 		
 	}
+   @Ignore
      @Test
   	public void selectCountWithGroupByColumnsWithWhereTestCase(){
   		
   	   String queryString="select count(City) from C:/Scala/emp.csv group by City";
+  		resultSet=query.executeQuery(queryString);
+  		assertNotNull(resultSet);
+  		display(queryString,resultSet);
+  		
+  	}
+   @Ignore
+     @Test
+   	public void selectSumWithGroupByColumnsTestCase(){
+   		
+   	   String queryString="select sum(Salary) from C:/Scala/emp.csv group by City";
+   		resultSet=query.executeQuery(queryString);
+   		assertNotNull(resultSet);
+   		display(queryString,resultSet);
+   		
+   	}
+   @Ignore
+     @Test
+    	public void selectSumAndCountWithGroupByColumnsTestCase(){
+    		
+    	   String queryString="select sum(Salary),count(Name) from C:/Scala/emp.csv group by City";
+    		resultSet=query.executeQuery(queryString);
+    		assertNotNull(resultSet);
+    		display(queryString,resultSet);
+    		
+    	}
+   @Ignore
+   @Test
+	public void selectMinAndCountWithGroupByColumnsTestCase(){
+		
+	   String queryString="select min(Salary),count(Name) from C:/Scala/emp.csv group by Name";
+		resultSet=query.executeQuery(queryString);
+		assertNotNull(resultSet);
+		display(queryString,resultSet);
+		
+	}
+   @Test
+  	public void selectMaxAndCountWithGroupByColumnsTestCase(){
+  		
+  	   String queryString="select min(Salary),count(Salary) from C:/Scala/emp.csv group by Name";
   		resultSet=query.executeQuery(queryString);
   		assertNotNull(resultSet);
   		display(queryString,resultSet);

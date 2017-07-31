@@ -1,14 +1,10 @@
 package com.stackroute.datamunger.result;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import com.stackroute.datamunger.analyzer.QueryAnalyzer;
 import com.stackroute.datamunger.query.QueryParser;
